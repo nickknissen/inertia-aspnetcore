@@ -1,6 +1,7 @@
 ﻿using InertiaAdapter.Core;
 using InertiaAdapter.Interfaces;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 
 namespace InertiaAdapter
@@ -13,6 +14,9 @@ namespace InertiaAdapter
 
         public static Result Render(string component, object controller) =>
             _factory.Render(component, controller);
+
+        public static Result Render(string component) =>
+            _factory.Render(component, new { });
 
         public static Result RedirectBack()
         {
