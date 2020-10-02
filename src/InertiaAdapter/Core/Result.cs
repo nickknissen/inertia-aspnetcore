@@ -52,6 +52,18 @@ namespace InertiaAdapter.Core
             return this;
         }
 
+        public IActionResult WithSuccessMessage(string msg)
+        {
+            _props.Flash.Success = msg;
+            return this;
+        }
+
+        public IActionResult WithErrorMessage(string msg)
+        {
+            _props.Flash.Error = msg;
+            return this;
+        }
+
         public bool HasErrors()
         {
             return _props.Errors != null;
