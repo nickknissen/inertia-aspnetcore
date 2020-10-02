@@ -30,7 +30,6 @@ namespace InertiaAdapter.Extensions
         {
             ac.NotNull().HttpContext.Response.Headers.Add("Vary", "Accept");
             ac.NotNull().HttpContext.Response.Headers.Add("X-Inertia", "true");
-            ac.NotNull().HttpContext.Response.StatusCode = 200;
         }
 
         internal static HttpResponse Configure409Response(this HttpContext hc)
