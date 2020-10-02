@@ -14,6 +14,14 @@ namespace InertiaAdapter
         public static Result Render(string component, object controller) =>
             _factory.Render(component, controller);
 
+        public static Result RedirectBack()
+        {
+            var result = _factory.Render("", new { });
+            result.RirectBack();
+
+            return result;
+        }
+
         public static string? GetVersion() => _factory.GetVersion();
 
         public static void SetRootView(string s) => _factory.SetRootView(s);

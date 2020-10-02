@@ -15,6 +15,7 @@ namespace InertiaAdapter.Core
         private readonly string _rootView;
         private readonly string? _version;
         private Page? _page;
+        private bool _redirectBack;
         private ActionContext? _context;
         private IDictionary<string, object>? _viewData;
 
@@ -32,6 +33,12 @@ namespace InertiaAdapter.Core
             _viewData = viewData;
             return this;
         }
+        
+        public IActionResult RirectBack()
+        {
+            _redirectBack = true;
+            return this;
+        }
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
@@ -43,6 +50,14 @@ namespace InertiaAdapter.Core
                 _props.Controller = InvokeIfLazy(only);
 
             ConstructPage();
+
+            string referer = context.HttpContext.Request.Headers["Referer"];
+            string path = context.HttpContext.Request.Path;
+            if (_redirectBack && !string.IsNullOrEmpty(referer) && !referer.EndsWith(path))
+            {
+                context.HttpContext.Response.StatusCode = 302;
+                context.HttpContext.Response.Headers.Add("Location", referer);
+            }
 
             await GetResult().ExecuteResultAsync(_context);
         }
