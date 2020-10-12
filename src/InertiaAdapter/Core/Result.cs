@@ -1,6 +1,7 @@
 ﻿using InertiaAdapter.Extensions;
 using InertiaAdapter.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace InertiaAdapter.Core
         private readonly string _rootView;
         private readonly string? _version;
         private Page? _page;
+        private bool _redirectBack;
         private ActionContext? _context;
         private IDictionary<string, object>? _viewData;
 
@@ -27,9 +29,55 @@ namespace InertiaAdapter.Core
             return this;
         }
 
+        public IActionResult Errors(IDictionary<string, string> errors)
+        {
+            _props.Errors = errors;
+
+            return this;
+        }
+        public IActionResult Errors(ModelStateDictionary modelState)
+        {
+            _props.Errors = (from kvp in modelState
+                    let field = kvp.Key
+                    let state = kvp.Value
+                             let errors = state.Errors.Select(e => e.ErrorMessage)
+                             where state.Errors.Count > 0
+                    select new
+                    {
+                        Key = kvp.Key.ToLower(),
+                        Errors = errors.FirstOrDefault(),
+                    })
+                .ToDictionary(e => e.Key, e => e.Errors);
+
+            return this;
+        }
+
+        public IActionResult WithSuccessMessage(string msg)
+        {
+            _props.Flash.Success = msg;
+            return this;
+        }
+
+        public IActionResult WithErrorMessage(string msg)
+        {
+            _props.Flash.Error = msg;
+            return this;
+        }
+
+        public bool HasErrors()
+        {
+            return _props.Errors != null;
+        }
+
         public IActionResult WithViewData(IDictionary<string, object> viewData)
         {
             _viewData = viewData;
+            return this;
+        }
+        
+        public IActionResult RirectBack()
+        {
+            _redirectBack = true;
             return this;
         }
 
@@ -43,6 +91,14 @@ namespace InertiaAdapter.Core
                 _props.Controller = InvokeIfLazy(only);
 
             ConstructPage();
+
+            string referer = context.HttpContext.Request.Headers["Referer"];
+            string path = context.HttpContext.Request.Path;
+            if (_redirectBack && !string.IsNullOrEmpty(referer) && !referer.EndsWith(path))
+            {
+                context.HttpContext.Response.StatusCode = 302;
+                context.HttpContext.Response.Headers.Add("Location", referer);
+            }
 
             await GetResult().ExecuteResultAsync(_context);
         }
