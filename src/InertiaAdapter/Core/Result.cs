@@ -123,13 +123,16 @@ namespace InertiaAdapter.Core
             return new JsonResult(_page);
         }
 
-        private void ConstructPage() => _page = new Page
+        private void ConstructPage()
         {
-            Props = _props,
-            Component = _component,
-            Version = _version,
-            Url = _context.RequestedUri()
-        };
+            _page = new Page
+            {
+                Props = _props.MergedProps(),
+                Component = _component,
+                Version = _version,
+                Url = _context.RequestedUri()
+            };
+        }
 
         private IActionResult GetResult() =>
             IsInertiaRequest() ? (IActionResult) Json() : View();

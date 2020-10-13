@@ -31,6 +31,7 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Tests</_Parameter1>
     </AssemblyAttribute>
+    <PackageReference Include="TypeMerger" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
