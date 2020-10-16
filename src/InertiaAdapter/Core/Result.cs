@@ -94,7 +94,7 @@ namespace InertiaAdapter.Core
 
             string referer = context.HttpContext.Request.Headers["Referer"];
             string path = context.HttpContext.Request.Path;
-            if (_redirectBack && !string.IsNullOrEmpty(referer) && !referer.EndsWith(path))
+            if (_redirectBack)
             {
                 context.HttpContext.Response.StatusCode = 302;
                 context.HttpContext.Response.Headers.Add("Location", referer);
