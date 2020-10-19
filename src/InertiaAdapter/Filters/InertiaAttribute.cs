@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace InertiaAdapter.Filters 
 {
@@ -25,13 +26,17 @@ namespace InertiaAdapter.Filters
 
         public override void OnActionExecuted (ActionExecutedContext context)
         {
-            Result result = (Result)context.Result;
+            if (!(context.Result is Result))
+            {
+                return;
+            }
 
             Controller controller = (Controller)context.Controller;
 
             HttpMethodActionConstraint contraint = (HttpMethodActionConstraint)context.ActionDescriptor.ActionConstraints?.FirstOrDefault();
 
-            if (contraint == null || !contraint.HttpMethods.Any(m => m == "GET"))
+	    // contraint is null when method does not have HttpGet attribute
+            if (contraint != null && !contraint.HttpMethods.Any(m => m == "GET"))
             {
                 return;
             }
@@ -40,7 +45,7 @@ namespace InertiaAdapter.Filters
 
             if (errors!= null)
             {
-                result.Errors(errors);
+                _ = (context.Result as Result).Errors(errors);
             }
 
             base.OnActionExecuted(context);
