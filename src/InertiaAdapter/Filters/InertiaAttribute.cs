@@ -1,4 +1,5 @@
 ﻿using InertiaAdapter.Core;
+using InertiaAdapter.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -42,11 +43,20 @@ namespace InertiaAdapter.Filters
             }
 
             var errors = (IDictionary<string, string>)controller.TempData["errors"];
+            string success = (string) controller.TempData["SuccessMessage"];
+            string error = (string) controller.TempData["ErrorMessage"];
+
+            Result? result = context.Result as Result;
+
+            result = result
+                .WithSuccessMessage(success)
+                .WithErrorMessage(error);
 
             if (errors!= null)
             {
-                _ = (context.Result as Result).Errors(errors);
+                result.Errors(errors);
             }
+                   
 
             base.OnActionExecuted(context);
         }

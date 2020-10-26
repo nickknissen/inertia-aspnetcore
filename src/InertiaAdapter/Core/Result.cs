@@ -23,19 +23,19 @@ namespace InertiaAdapter.Core
         internal Result(Props props, string component, string rootView, string? version) =>
             (_props, _component, _rootView, _version) = (props, component, rootView, version);
 
-        public IActionResult With(object with)
+        public Result With(object with)
         {
             _props.With = with;
             return this;
         }
 
-        public IActionResult Errors(IDictionary<string, string> errors)
+        public Result Errors(IDictionary<string, string> errors)
         {
             _props.Errors = errors;
 
             return this;
         }
-        public IActionResult Errors(ModelStateDictionary modelState)
+        public Result Errors(ModelStateDictionary modelState)
         {
             _props.Errors = (from kvp in modelState
                     let field = kvp.Key
@@ -52,13 +52,13 @@ namespace InertiaAdapter.Core
             return this;
         }
 
-        public IActionResult WithSuccessMessage(string msg)
+        public Result WithSuccessMessage(string msg)
         {
             _props.Flash.Success = msg;
             return this;
         }
 
-        public IActionResult WithErrorMessage(string msg)
+        public Result WithErrorMessage(string msg)
         {
             _props.Flash.Error = msg;
             return this;
@@ -96,6 +96,14 @@ namespace InertiaAdapter.Core
             string path = context.HttpContext.Request.Path;
             if (_redirectBack)
             {
+                //Pass error/succes message to next request
+                ITempDataDictionaryFactory factory = context.HttpContext.RequestServices.GetService(typeof(ITempDataDictionaryFactory)) as ITempDataDictionaryFactory;
+                ITempDataDictionary tempData = factory.GetTempData(context.HttpContext);
+
+                tempData.Add("SuccessMessage", _props.Flash.Success);
+                tempData.Add("ErrorMessage", _props.Flash.Error);
+
+
                 context.HttpContext.Response.StatusCode = 302;
                 context.HttpContext.Response.Headers.Add("Location", referer);
             }
