@@ -13,8 +13,11 @@ namespace InertiaAdapter.Extensions
 {
     internal static class ResultExtensions
     {
-        internal static IResultFactory ResultFactory(this IApplicationBuilder app) =>
-            app.NotNull().ApplicationServices.GetRequiredService<IResultFactory>();
+        internal static IResultFactory ResultFactory(this IApplicationBuilder app)
+        {
+            var scope = app.ApplicationServices.CreateScope();
+            return scope.ServiceProvider.GetRequiredService<IResultFactory>();
+        }
 
         internal static string ComponentName(this ActionContext? ac) =>
             ac.NotNull().HttpContext.Request.Headers["X-Inertia-Partial-Component"];
