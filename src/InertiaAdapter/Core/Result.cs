@@ -19,9 +19,12 @@ namespace InertiaAdapter.Core
         private bool _redirectBack;
         private ActionContext? _context;
         private IDictionary<string, object>? _viewData;
+        private List<ISharedDataResolver> _sharedDataResolvers;
 
-        internal Result(Props props, string component, string rootView, string? version) =>
-            (_props, _component, _rootView, _version) = (props, component, rootView, version);
+        internal Result(Props props, string component, string rootView, string? version, List<ISharedDataResolver> dataResolvers)
+        {
+            (_props, _component, _rootView, _version, _sharedDataResolvers) = (props, component, rootView, version, dataResolvers);
+        }
 
         public Result With(object with)
         {
@@ -89,6 +92,13 @@ namespace InertiaAdapter.Core
 
             if (isPartial)
                 _props.Controller = InvokeIfLazy(only);
+
+
+            foreach(var resolver in _sharedDataResolvers)
+            {
+                var data = await resolver.ResolveDataAsync(context.HttpContext);
+                _props.Share = _props.Share.Concat(data).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
 
             ConstructPage();
 

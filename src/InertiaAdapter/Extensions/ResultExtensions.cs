@@ -15,7 +15,7 @@ namespace InertiaAdapter.Extensions
     {
         internal static IResultFactory ResultFactory(this IApplicationBuilder app)
         {
-            var scope = app.ApplicationServices.CreateScope();
+            using var scope = app.ApplicationServices.CreateScope();
             return scope.ServiceProvider.GetRequiredService<IResultFactory>();
         }
 

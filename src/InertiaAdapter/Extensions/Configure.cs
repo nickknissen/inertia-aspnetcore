@@ -1,27 +1,32 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace InertiaAdapter.Extensions
 {
-    public static class Configure
+    public class InertiaBuilder
     {
-        public static IApplicationBuilder UseInertia(this IApplicationBuilder app)
+        public void AddSharedDataResolvers(ISharedDataResolver value)
         {
-            Inertia.Init(app.ResultFactory());
-
-            app.UseWhen(IsNewVersion, RefreshVersion());
-
-            app.UseWhen(IsNotRedirect, Redirect());
-
-            return app;
+            Inertia.AddSharedDataResolver(value);
         }
 
+        public IApplicationBuilder ApplicationBuilder { get; }
+
+        public InertiaBuilder(IApplicationBuilder applicationBuilder)
+        {
+            ApplicationBuilder = applicationBuilder ?? throw new ArgumentNullException(nameof(applicationBuilder));
+            Inertia.Init(ApplicationBuilder.ResultFactory());
+
+            ApplicationBuilder.UseWhen(IsNewVersion, RefreshVersion());
+            ApplicationBuilder.UseWhen(IsNotRedirect, Redirect());
+        }
         private static bool IsNotRedirect(HttpContext hc) =>
-            hc.IsInertiaRequest() &&
-            new[] { "PATCH", "PUT", "DELETE" }.Contains(hc.Request.Method);
+              hc.IsInertiaRequest() &&
+              new[] { "PATCH", "PUT", "DELETE" }.Contains(hc.Request.Method);
 
         private static bool IsNewVersion(HttpContext hc) =>
             hc.IsInertiaRequest() &&
@@ -51,5 +56,16 @@ namespace InertiaAdapter.Extensions
 
                 await next();
             });
+
+    }
+
+    public static class Configure
+    {
+        public static IApplicationBuilder UseInertia(this IApplicationBuilder app, Action<InertiaBuilder> configure)
+        {
+            configure(new InertiaBuilder(app));
+
+            return app;
+        }
     }
 }

@@ -48,9 +48,17 @@ namespace InertiaAdapter.Filters
 
             Result? result = context.Result as Result;
 
-            result = result
-                .WithSuccessMessage(success)
-                .WithErrorMessage(error);
+            if (!string.IsNullOrEmpty(success))
+            {
+                result = result
+                    .WithSuccessMessage(success);
+            }
+
+            if (!string.IsNullOrEmpty(error))
+            {
+                result = result
+                    .WithErrorMessage(error);
+            }
 
             if (errors!= null)
             {

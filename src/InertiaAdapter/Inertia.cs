@@ -1,8 +1,10 @@
 ﻿using InertiaAdapter.Core;
+using InertiaAdapter.Extensions;
 using InertiaAdapter.Interfaces;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
+using System.Collections.Generic;
 
 namespace InertiaAdapter
 {
@@ -12,8 +14,8 @@ namespace InertiaAdapter
 
         public static void Init(IResultFactory factory) => _factory = factory;
 
-        public static Result Render(string component, object controller) =>
-            _factory.Render(component, controller);
+        public static Result Render(string component, object props) =>
+            _factory.Render(component, props);
 
         public static Result Render(string component) =>
             _factory.Render(component, new { });
@@ -36,10 +38,9 @@ namespace InertiaAdapter
 
         public static void Version(Func<string> s) => _factory.Version(s);
 
-        public static object? Share
-        {
-            get => _factory.Share;
-            set => _factory.Share = value;
-        }
+        public static void ShareData(string key, object value) => _factory.ShareData(key, value);
+        public static void AddSharedDataResolver(ISharedDataResolver dataResolver) => _factory.AddSharedDataResolver(dataResolver);
+        public static void SharedDataResolvers(List<ISharedDataResolver> dataResolvers) => _factory.SharedDataResolvers = dataResolvers;
+            
     }
 }

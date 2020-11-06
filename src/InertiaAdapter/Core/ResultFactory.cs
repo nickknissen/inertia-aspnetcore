@@ -1,7 +1,10 @@
-﻿using InertiaAdapter.Interfaces;
+﻿using InertiaAdapter.Extensions;
+using InertiaAdapter.Interfaces;
 using InertiaAdapter.Models;
 using Microsoft.AspNetCore.Html;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Web;
 
@@ -9,7 +12,9 @@ namespace InertiaAdapter.Core
 {
     internal class ResultFactory : IResultFactory
     {
-        public object? Share { get; set; }
+        private Dictionary<string, object> Share { get; set; } = new Dictionary<string, object>();
+        public List<ISharedDataResolver> SharedDataResolvers { get; set; } = new List<ISharedDataResolver>();
+
         private string _rootView = "Views/App.cshtml";
         private object? _version;
 
@@ -38,7 +43,26 @@ namespace InertiaAdapter.Core
             return new HtmlString($"<div id=\"app\" data-page=\"{data}\"></div>");
         }
 
-        public Result Render(string component, object controller) =>
-            new Result(new Props { Controller = controller, Share = Share }, component, _rootView, GetVersion());
+        public Result Render(string component, object controllerProps)
+        {
+
+            return new Result(
+                new Props { Controller = controllerProps, Share = Share }, 
+                component, 
+                _rootView, 
+                GetVersion(),
+                SharedDataResolvers
+            );
+        }
+
+        public void ShareData(string key, object value)
+        {
+            Share.Add(key, value);
+        }
+
+        public void AddSharedDataResolver(ISharedDataResolver dataResolvers)
+        {
+            SharedDataResolvers.Add(dataResolvers);
+        }
     }
 }

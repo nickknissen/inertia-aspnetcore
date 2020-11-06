@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using System.Collections.Generic;
+using System.Dynamic;
 
 namespace InertiaAdapter.Models
 {
@@ -7,6 +8,6 @@ namespace InertiaAdapter.Models
         public string? Component { get; set; }
         public string? Version { get; set; }
         public string? Url { get; set; }
-        public object Props { get; set; } = new { };
+        public Dictionary<string, object> Props { get; set; }
     }
 }
