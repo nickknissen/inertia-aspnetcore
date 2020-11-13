@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using InertiaAdapter.Extensions;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -38,9 +39,11 @@ namespace InertiaAdapter.Models
 
             var objectDict = props.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                     .ToDictionary(prop => prop.Name.ToLower(), prop => prop.GetValue(props, null));
+                     .ToDictionary(prop => Helpers.ToCamelCase(prop.Name), prop => prop.GetValue(props, null));
 
-            return objectDict.Concat(Share).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            return objectDict
+                .Concat(Share)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
         }
     }
