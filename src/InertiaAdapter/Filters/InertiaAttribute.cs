@@ -14,7 +14,8 @@ namespace InertiaAdapter.Filters
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (context.HttpContext.Request.Method == "POST" && !context.ModelState.IsValid)
+            List<string> methods =  new List<string>() { "POST", "PUT" };
+            if (methods.Contains(context.HttpContext.Request.Method) && !context.ModelState.IsValid)
             {
                 Controller controller = (Controller)context.Controller;
                 var validation = ValidateModel(context.ModelState);
