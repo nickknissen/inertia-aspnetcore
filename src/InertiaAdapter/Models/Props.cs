@@ -18,8 +18,14 @@ namespace InertiaAdapter.Models
             Controller ??= new { };
             Share ??= new Dictionary<string, object>();
             With ??= new { };
-
             object props = new  { };
+
+            bool controllerPropsIsDict = Controller is IDictionary && Controller.GetType().IsGenericType && Controller.GetType().GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>));
+
+            if (!controllerPropsIsDict) 
+            {
+                props = TypeMerger.TypeMerger.Merge(props, Controller);
+            }
 
             props = TypeMerger.TypeMerger.Merge(props, With);
 
@@ -27,14 +33,10 @@ namespace InertiaAdapter.Models
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                      .ToDictionary(prop => Helpers.ToCamelCase(prop.Name), prop => prop.GetValue(props, null));
 
-            if (Controller is IDictionary &&
-               Controller.GetType().IsGenericType &&
-               Controller.GetType().GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>))
-               ) {
-                objectDict = objectDict.Concat((IEnumerable<KeyValuePair<string, object>>)Controller).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            } else
-            {
-                props = TypeMerger.TypeMerger.Merge(props, Controller);
+            if (controllerPropsIsDict) {
+                objectDict = objectDict
+                    .Concat((IEnumerable<KeyValuePair<string, object>>)Controller)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 
             return objectDict
