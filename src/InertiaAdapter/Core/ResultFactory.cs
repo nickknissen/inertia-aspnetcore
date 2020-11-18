@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Html;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Web;
 
@@ -45,9 +46,12 @@ namespace InertiaAdapter.Core
 
         public Result Render(string component, object controllerProps)
         {
+            var props = controllerProps.GetType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                     .ToDictionary(prop => Helpers.ToCamelCase(prop.Name), prop => prop.GetValue(controllerProps, null));
 
             return new Result(
-                new Props { Controller = controllerProps, Share = Share }, 
+                new Props { Controller = props, Share = Share }, 
                 component, 
                 _rootView, 
                 GetVersion(),

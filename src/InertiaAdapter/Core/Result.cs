@@ -50,14 +50,20 @@ namespace InertiaAdapter.Core
 
             var (isPartial, only) = PartialRequest();
 
-            if (isPartial)
+            if (isPartial) {
                 _props.Controller = InvokeIfLazy(only);
+            } else {
+		// Remove lazy objects
+                _props.Controller = _props.Controller.Where(kvp => !kvp.Value.IsLazy()).ToDictionary(i => i.Key, i => i.Value);
+            }
 
 
             foreach(var resolver in _sharedDataResolvers)
             {
                 var data = await resolver.ResolveDataAsync(context.HttpContext);
-                _props.Share = _props.Share.Concat(data).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                _props.Share = _props.Share
+                    .Concat(data)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 
             ConstructPage();
@@ -66,10 +72,6 @@ namespace InertiaAdapter.Core
             string path = context.HttpContext.Request.Path;
             if (_redirectBack)
             {
-                //Pass error/succes message to next request
-                ITempDataDictionaryFactory factory = context.HttpContext.RequestServices.GetService(typeof(ITempDataDictionaryFactory)) as ITempDataDictionaryFactory;
-                ITempDataDictionary tempData = factory.GetTempData(context.HttpContext);
-
                 context.HttpContext.Response.StatusCode = 302;
                 context.HttpContext.Response.Headers.Add("Location", referer);
             }
@@ -77,12 +79,18 @@ namespace InertiaAdapter.Core
             await GetResult().ExecuteResultAsync(_context);
         }
 
-        private object InvokeIfLazy(IEnumerable<string> str) =>
+        private Dictionary<string, object> InvokeIfLazy(IEnumerable<string> str) =>
             str.ToDictionary(o => o, o =>
             {
-                var obj = _props.Controller.Value(o);
+                object obj;
+                _ = _props.Controller.TryGetValue(o, out obj);
 
-                return obj.IsLazy() ? ((dynamic) obj).Value : obj;
+                if (obj.IsLazy())
+                {
+                    return ((dynamic) obj).Value;
+                } else {
+                    return obj;
+                }
             });
 
         private ViewResult View() => new ViewResult
@@ -116,7 +124,7 @@ namespace InertiaAdapter.Core
         {
             var only = _props.Controller.Only(PartialData());
 
-            return (ComponentName() != _component && only.Count > 0, only);
+            return (ComponentName() == _component && only.Count > 0, only);
         }
 
         private ViewDataDictionary ConstructViewData() => new ViewData(_page, _context, _viewData).ViewDataDictionary;

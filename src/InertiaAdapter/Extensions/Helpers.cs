@@ -13,10 +13,6 @@ namespace InertiaAdapter.Extensions
         internal static T NotNull<T>([NotNull] this T? value) where T : class =>
             value ?? throw new ArgumentNullException(nameof(value));
 
-        internal static object Value([NotNull] this object? obj, string propertyName) =>
-            obj?.GetType().GetProperty(propertyName)?.GetValue(obj, null) ??
-            throw new NullReferenceException();
-
         internal static bool IsInertiaRequest(this HttpContext? hc) =>
             bool.TryParse(hc.NotNull().Request.Headers["X-Inertia"], out _);
 

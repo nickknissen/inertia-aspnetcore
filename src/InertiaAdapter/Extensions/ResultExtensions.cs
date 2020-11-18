@@ -22,9 +22,8 @@ namespace InertiaAdapter.Extensions
         internal static string ComponentName(this ActionContext? ac) =>
             ac.NotNull().HttpContext.Request.Headers["X-Inertia-Partial-Component"];
 
-        internal static IList<string> Only(this object? obj, IList<string> list) =>
-            obj?.GetType().GetProperties().Select(c => c.Name).Intersect(list).ToList() ??
-            new List<string>();
+        internal static IList<string> Only(this Dictionary<string, object>? obj, IList<string> list) => 
+            obj?.Keys.Intersect(list).ToList() ?? new List<string>();
 
         internal static bool IsLazy(this object obj) =>
             obj.GetType().IsGenericType && obj.GetType().GetGenericTypeDefinition() == typeof(Lazy<>);
