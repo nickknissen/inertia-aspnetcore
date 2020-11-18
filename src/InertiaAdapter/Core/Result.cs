@@ -32,46 +32,6 @@ namespace InertiaAdapter.Core
             return this;
         }
 
-        public Result Errors(IDictionary<string, string> errors)
-        {
-            _props.Errors = errors;
-
-            return this;
-        }
-        public Result Errors(ModelStateDictionary modelState)
-        {
-            _props.Errors = (from kvp in modelState
-                    let field = kvp.Key
-                    let state = kvp.Value
-                             let errors = state.Errors.Select(e => e.ErrorMessage)
-                             where state.Errors.Count > 0
-                    select new
-                    {
-                        Key = kvp.Key.ToLower(),
-                        Errors = errors.FirstOrDefault(),
-                    })
-                .ToDictionary(e => e.Key, e => e.Errors);
-
-            return this;
-        }
-
-        public Result WithSuccessMessage(string msg)
-        {
-            _props.Flash.Success = msg;
-            return this;
-        }
-
-        public Result WithErrorMessage(string msg)
-        {
-            _props.Flash.Error = msg;
-            return this;
-        }
-
-        public bool HasErrors()
-        {
-            return _props.Errors != null;
-        }
-
         public IActionResult WithViewData(IDictionary<string, object> viewData)
         {
             _viewData = viewData;
@@ -109,10 +69,6 @@ namespace InertiaAdapter.Core
                 //Pass error/succes message to next request
                 ITempDataDictionaryFactory factory = context.HttpContext.RequestServices.GetService(typeof(ITempDataDictionaryFactory)) as ITempDataDictionaryFactory;
                 ITempDataDictionary tempData = factory.GetTempData(context.HttpContext);
-
-                tempData.Add("SuccessMessage", _props.Flash.Success);
-                tempData.Add("ErrorMessage", _props.Flash.Error);
-
 
                 context.HttpContext.Response.StatusCode = 302;
                 context.HttpContext.Response.Headers.Add("Location", referer);

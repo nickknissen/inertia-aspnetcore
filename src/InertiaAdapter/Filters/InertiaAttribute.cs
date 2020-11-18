@@ -1,12 +1,8 @@
-﻿using InertiaAdapter.Core;
-using InertiaAdapter.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace InertiaAdapter.Filters 
 {
@@ -24,50 +20,6 @@ namespace InertiaAdapter.Filters
 
             base.OnActionExecuting(context);
 
-        }
-
-        public override void OnActionExecuted (ActionExecutedContext context)
-        {
-            if (!(context.Result is Result))
-            {
-                return;
-            }
-
-            Controller controller = (Controller)context.Controller;
-
-            HttpMethodActionConstraint contraint = (HttpMethodActionConstraint)context.ActionDescriptor.ActionConstraints?.FirstOrDefault();
-
-	    // contraint is null when method does not have HttpGet attribute
-            if (contraint != null && !contraint.HttpMethods.Any(m => m == "GET"))
-            {
-                return;
-            }
-
-            var errors = (IDictionary<string, string>)controller.TempData["errors"];
-            string success = (string) controller.TempData["SuccessMessage"];
-            string error = (string) controller.TempData["ErrorMessage"];
-
-            Result? result = context.Result as Result;
-
-            if (!string.IsNullOrEmpty(success))
-            {
-                result = result
-                    .WithSuccessMessage(success);
-            }
-
-            if (!string.IsNullOrEmpty(error))
-            {
-                result = result
-                    .WithErrorMessage(error);
-            }
-
-            if (errors!= null)
-            {
-                result.Errors(errors);
-            }
-                   
-
-            base.OnActionExecuted(context);
         }
 
         private Dictionary<string, string> ValidateModel(ModelStateDictionary modelState)
