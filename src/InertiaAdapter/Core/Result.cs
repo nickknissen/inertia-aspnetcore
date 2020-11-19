@@ -3,6 +3,7 @@ using InertiaAdapter.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -53,10 +54,9 @@ namespace InertiaAdapter.Core
             if (isPartial) {
                 _props.Controller = InvokeIfLazy(only);
             } else {
-		// Remove lazy objects
+		        // Remove lazy objects
                 _props.Controller = _props.Controller.Where(kvp => !kvp.Value.IsLazy()).ToDictionary(i => i.Key, i => i.Value);
             }
-
 
             foreach(var resolver in _sharedDataResolvers)
             {

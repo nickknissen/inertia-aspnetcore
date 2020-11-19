@@ -48,7 +48,7 @@ namespace InertiaAdapter.Core
         {
             var props = controllerProps.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                     .ToDictionary(prop => Helpers.ToCamelCase(prop.Name), prop => prop.GetValue(controllerProps, null));
+                     .ToDictionary(prop => prop.Name.ToCamelCase(), prop => prop.GetValue(controllerProps, null));
 
             return new Result(
                 new Props { Controller = props, Share = Share }, 

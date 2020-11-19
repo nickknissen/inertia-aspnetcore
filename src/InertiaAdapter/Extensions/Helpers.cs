@@ -19,15 +19,21 @@ namespace InertiaAdapter.Extensions
         internal static bool IsInertiaRequest(this ActionContext? ac) =>
             bool.TryParse(ac.NotNull().HttpContext.Request.Headers["X-Inertia"], out _);
 
-        internal static string ToCamelCase(string str) 
+        internal static string ToCamelCase(this string str, CultureInfo? culture = null) 
         {
             Regex pattern = new Regex(@"[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+");
+
+            if (culture == null)
+            {
+                culture = new CultureInfo("en-US", false);
+            }
+
             return new string(
-                new CultureInfo("en-US", false)
+                culture 
                     .TextInfo
-                    .ToTitleCase(string.Join(" ", pattern.Matches(str)).ToLower())
-                    .Replace(@" ", "")
-                    .Select((x, i) => i == 0 ? char.ToLower(x) : x)
+                    .ToTitleCase(string.Join(" ", pattern.Matches(str)).ToLower(culture))
+                    .Replace(" ", "", StringComparison.OrdinalIgnoreCase)
+                    .Select((x, i) => i == 0 ? char.ToLower(x, culture) : x)
                     .ToArray()
             );
         }

@@ -21,10 +21,10 @@ namespace InertiaAdapter.Models
 
             var dict = With.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                     .ToDictionary(prop => Helpers.ToCamelCase(prop.Name), prop => prop.GetValue(With, null));
+                     .ToDictionary(prop => prop.Name.ToCamelCase(), prop => prop.GetValue(With, null));
 
             return dict 
-                .Concat((IEnumerable<KeyValuePair<string, object>>)Controller)
+                .Concat(Controller)
                 .Concat(Share)
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
