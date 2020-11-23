@@ -6,20 +6,18 @@ using System.Linq;
 
 namespace InertiaAdapter.Filters 
 {
-    public class InertiaActionAttribute : ActionFilterAttribute
+    public class InertiaValidateModelAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            List<string> methods = new List<string>() { "POST", "PUT" };
-            if (methods.Contains(context.HttpContext.Request.Method) && !context.ModelState.IsValid)
+            if (context.Result == null && !context.ModelState.IsValid) 
             {
                 Controller controller = (Controller)context.Controller;
                 var validation = ValidateModel(context.ModelState);
                 controller.TempData.TryAdd("errors", validation);
+
+                context.Result = Inertia.RedirectBack();
             }
-
-            base.OnActionExecuting(context);
-
         }
 
         private Dictionary<string, string> ValidateModel(ModelStateDictionary modelState)
