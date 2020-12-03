@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using InertiaAdapter.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace InertiaAdapter.Filters
                     where state.Errors.Count > 0
                     select new
                     {
-                        Key = kvp.Key.ToLower(),
+                        Key = kvp.Key.ToCamelCase(),
                         Errors = errors.FirstOrDefault(),
                     })
                 .ToDictionary(e => e.Key, e => e.Errors);
