@@ -25,8 +25,10 @@ namespace InertiaAdapter.Extensions
         internal static IList<string> Only(this Dictionary<string, object>? obj, IList<string> list) => 
             obj?.Keys.Intersect(list).ToList() ?? new List<string>();
 
-        internal static bool IsLazy(this object obj) =>
-            obj.GetType().IsGenericType && obj.GetType().GetGenericTypeDefinition() == typeof(Lazy<>);
+        internal static bool IsLazy(this object obj)
+        {
+            return obj != null && obj.GetType().IsGenericType && obj.GetType().GetGenericTypeDefinition() == typeof(Lazy<>);
+        }
 
         internal static void ConfigureResponse(this ActionContext? ac)
         {
