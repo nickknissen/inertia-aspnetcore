@@ -1,7 +1,7 @@
-﻿using InertiaAdapter.Core;
+using System;
+using InertiaAdapter.Core;
 using InertiaAdapter.Interfaces;
 using Microsoft.AspNetCore.Html;
-using System;
 
 namespace InertiaAdapter
 {

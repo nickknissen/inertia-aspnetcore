@@ -1,15 +1,17 @@
-﻿using InertiaAdapter.Interfaces;
-using InertiaAdapter.Models;
-using Microsoft.AspNetCore.Html;
 using System;
 using System.Text.Json;
+using InertiaAdapter.Interfaces;
+using InertiaAdapter.Models;
+using Microsoft.AspNetCore.Html;
 
 namespace InertiaAdapter.Core
 {
     internal class ResultFactory : IResultFactory
     {
         public object? Share { get; set; }
+
         private string _rootView = "Views/App.cshtml";
+
         private object? _version;
 
         public void SetRootView(string s) => _rootView = s;
@@ -35,6 +37,6 @@ namespace InertiaAdapter.Core
         }
 
         public Result Render(string component, object controller) =>
-            new Result(new Props { Controller = controller, Share = Share }, component, _rootView, GetVersion());
+            new(new Props { Controller = controller, Share = Share }, component, _rootView, GetVersion());
     }
 }
