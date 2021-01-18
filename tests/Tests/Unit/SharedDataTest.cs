@@ -17,17 +17,42 @@ namespace Tests.Unit
         }
 
         [Fact]
-        public void DuplicateKeysException()
+        public void CanAddOrUpdateObjectWithTheSameKey()
         {
             var shared = new SharedProps();
 
             const string Key = "Foo";
 
-            Assert.Throws<DuplicateKeysException>(() =>
-            {
-                shared.Add(Key, "Bar");
-                shared.Add(Key, "Bar");
-            });
+            shared.AddOrUpdate(Key, "Foo");
+            shared.AddOrUpdate(Key, "Bar");
+
+            Assert.Equal("Bar", shared.GetValue(Key));
+        }
+
+        [Fact]
+        public void CanAddOrUpdateDelegateWithTheSameKey()
+        {
+            var shared = new SharedProps();
+
+            const string Key = "Foo";
+
+            shared.AddOrUpdate(Key, () => "Foo");
+            shared.AddOrUpdate(Key, () => "Bar");
+
+            Assert.Equal("Bar", shared.GetValue(Key));
+        }
+
+        [Fact]
+        public void CanAddOrUpdateDelegateAndObjectWithTheSameKey()
+        {
+            var shared = new SharedProps();
+
+            const string Key = "Foo";
+
+            shared.AddOrUpdate(Key, "Foo");
+            shared.AddOrUpdate(Key, () => "Bar");
+
+            Assert.Equal("Bar", shared.GetValue(Key));
         }
 
         [Fact]
@@ -40,8 +65,8 @@ namespace Tests.Unit
 
             var shared = new SharedProps();
 
-            shared.Add(Key1, value1);
-            shared.Add(Key2, value2);
+            shared.AddOrUpdate(Key1, value1);
+            shared.AddOrUpdate(Key2, value2);
 
             Assert.Equal(2, shared.Value.Count);
             Assert.Equal(value1, shared.GetValue(Key1));
@@ -59,8 +84,8 @@ namespace Tests.Unit
 
             var shared = new SharedProps();
 
-            shared.Add(Key1, value1);
-            shared.Add(Key2, value2);
+            shared.AddOrUpdate(Key1, value1);
+            shared.AddOrUpdate(Key2, value2);
 
             Assert.Equal(2, shared.Value.Count);
             Assert.Equal(value1(), shared.GetValue(Key1));
@@ -69,12 +94,39 @@ namespace Tests.Unit
 
 
         [Fact]
-        public void FinalValueIsDictionaryAndEmpty()
+        public void ValueIsDictionaryAndEmpty()
         {
             var shared = new SharedProps();
 
             Assert.IsType<Dictionary<string, object>>(shared.Value);
             Assert.Empty(shared.Value);
+        }
+
+        [Fact]
+        public void ValueTest()
+        {
+            var shared = new SharedProps();
+
+            shared.AddOrUpdate("Foo", "Bar");
+            Assert.Single(shared.Value);
+            Assert.Equal("Bar", shared.GetValue("Foo"));
+
+            shared.AddOrUpdate("Foo", "Bar");
+            Assert.Single(shared.Value);
+            Assert.Equal("Bar", shared.GetValue("Foo"));
+
+            shared.AddOrUpdate("Foo", "Bar1");
+            Assert.Single(shared.Value);
+            Assert.Equal("Bar1", shared.GetValue("Foo"));
+
+            shared.AddOrUpdate("Foo", () => "Bar");
+            Assert.Single(shared.Value);
+            Assert.Equal("Bar", shared.GetValue("Foo"));
+
+            shared.AddOrUpdate("Foo1", () => "Bar1");
+            Assert.Equal(2, shared.Value.Count);
+            Assert.Equal("Bar", shared.GetValue("Foo"));
+            Assert.Equal("Bar1", shared.GetValue("Foo1"));
         }
     }
 }

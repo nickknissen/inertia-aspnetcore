@@ -15,9 +15,9 @@ namespace InertiaAdapter.Core
 
         private object? _version;
 
-        public void Share(string key, object obj) => _share.Add(key, obj);
+        public void Share(string key, object obj) => _share.AddOrUpdate(key, obj);
 
-        public void Share(string key, Func<object> func) => _share.Add(key, func);
+        public void Share(string key, Func<object> func) => _share.AddOrUpdate(key, func);
 
         public Dictionary<string, object> GetShared() => _share.Value;
 

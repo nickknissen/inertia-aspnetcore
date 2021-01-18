@@ -11,27 +11,30 @@ namespace InertiaAdapter.Core
 
         private readonly Dictionary<string, Func<object>> _stringWithDelegates = new();
 
-        private void CheckKey(string s)
+        private bool KeyExists(string key) =>
+            _stringWithObjects.ContainsKey(key) || _stringWithDelegates.ContainsKey(key);
+
+        private void RemoveAllKeysIfExist(string key)
         {
-            if (KeyExists(s))
-                throw new DuplicateKeysException("You can not have duplicate keys for shared props.");
+            if (!KeyExists(key)) return;
+
+            _stringWithDelegates.Remove(key);
+            _stringWithObjects.Remove(key);
         }
 
-        private bool KeyExists(string s) => _stringWithObjects.ContainsKey(s) || _stringWithDelegates.ContainsKey(s);
-
-
-        public void Add(string s, object o)
+        public void AddOrUpdate(string key, object o)
         {
-            CheckKey(s);
-            _stringWithObjects.Add(s, o);
+            RemoveAllKeysIfExist(key);
+
+            _stringWithObjects.Add(key, o);
         }
 
-        public void Add(string s, Func<object> func)
+        public void AddOrUpdate(string key, Func<object> func)
         {
-            CheckKey(s);
-            _stringWithDelegates.Add(s, func);
-        }
+            RemoveAllKeysIfExist(key);
 
+            _stringWithDelegates.Add(key, func);
+        }
 
         public object GetValue(string s)
         {
