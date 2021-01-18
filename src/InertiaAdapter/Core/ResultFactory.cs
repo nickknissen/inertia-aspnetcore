@@ -4,6 +4,7 @@ using System.Text.Json;
 using InertiaAdapter.Interfaces;
 using InertiaAdapter.Models;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InertiaAdapter.Core
 {
@@ -45,7 +46,8 @@ namespace InertiaAdapter.Core
             return new HtmlString($"<div id=\"app\" data-page={data}></div>");
         }
 
-        public Result Render(string component, object controller) =>
-            new(new Props { Controller = controller, SharedProps = _share.Value }, component, _rootView, GetVersion());
+        public IActionResult Render(string component, object controller) =>
+            new Result(new Props { Controller = controller, SharedProps = _share.Value }, component, _rootView,
+                GetVersion());
     }
 }

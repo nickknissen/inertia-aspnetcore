@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using InertiaAdapter.Core;
 using InertiaAdapter.Interfaces;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InertiaAdapter
 {
@@ -12,7 +12,7 @@ namespace InertiaAdapter
 
         public static void Init(IResultFactory factory) => _factory = factory;
 
-        public static Result Render(string component, object controller) =>
+        public static IActionResult Render(string component, object controller) =>
             _factory.Render(component, controller);
 
         public static string? GetVersion() => _factory.GetVersion();

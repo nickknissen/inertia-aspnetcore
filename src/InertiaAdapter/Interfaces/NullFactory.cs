@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using InertiaAdapter.Core;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InertiaAdapter.Interfaces
 {
@@ -25,6 +25,6 @@ namespace InertiaAdapter.Interfaces
 
         public IHtmlContent Html(dynamic model) => throw new NotImplementedException();
 
-        public Result Render(string component, object controller) => throw new NotImplementedException();
+        public IActionResult Render(string component, object controller) => throw new NotImplementedException();
     }
 }

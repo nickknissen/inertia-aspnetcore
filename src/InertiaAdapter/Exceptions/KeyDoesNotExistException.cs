@@ -2,7 +2,7 @@ using System;
 
 namespace InertiaAdapter.Exceptions
 {
-    public class KeyDoesNotExistException : Exception
+    internal class KeyDoesNotExistException : Exception
     {
         public KeyDoesNotExistException()
         {

@@ -1,9 +1,9 @@
-﻿using InertiaAdapter.Extensions;
+using System.Collections.Generic;
+using InertiaAdapter.Extensions;
 using InertiaAdapter.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System.Collections.Generic;
 
 namespace InertiaAdapter.Core
 {
