@@ -1,24 +1,30 @@
-﻿using InertiaAdapter.Extensions;
-using InertiaAdapter.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using InertiaAdapter.Extensions;
+using InertiaAdapter.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace InertiaAdapter.Core
 {
-    public class Result : IActionResult
+    internal class Result : IActionResult
     {
         private readonly string _component;
+
         private readonly Props _props;
+
         private readonly string _rootView;
+
         private readonly string? _version;
+
         private Page? _page;
+
         private ActionContext? _context;
+
         private IDictionary<string, object>? _viewData;
 
-        internal Result(Props props, string component, string rootView, string? version) =>
+        public Result(Props props, string component, string rootView, string? version) =>
             (_props, _component, _rootView, _version) = (props, component, rootView, version);
 
         public IActionResult With(object with)
@@ -52,14 +58,10 @@ namespace InertiaAdapter.Core
             {
                 var obj = _props.Controller.Value(o);
 
-                return obj.IsLazy() ? ((dynamic) obj).Value : obj;
+                return obj.IsLazy() ? ((dynamic)obj).Value : obj;
             });
 
-        private ViewResult View() => new ViewResult
-        {
-            ViewName = _rootView,
-            ViewData = ConstructViewData()
-        };
+        private ViewResult View() => new() { ViewName = _rootView, ViewData = ConstructViewData() };
 
         private JsonResult Json()
         {
@@ -76,7 +78,7 @@ namespace InertiaAdapter.Core
         };
 
         private IActionResult GetResult() =>
-            IsInertiaRequest() ? (IActionResult) Json() : View();
+            IsInertiaRequest() ? (IActionResult)Json() : View();
 
 
         private (bool, IList<string>) PartialRequest()

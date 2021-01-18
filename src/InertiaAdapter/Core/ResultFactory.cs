@@ -1,17 +1,29 @@
-﻿using InertiaAdapter.Interfaces;
-using InertiaAdapter.Models;
-using Microsoft.AspNetCore.Html;
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Web;
+using InertiaAdapter.Interfaces;
+using InertiaAdapter.Models;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InertiaAdapter.Core
 {
     internal class ResultFactory : IResultFactory
     {
-        public object? Share { get; set; }
+        private readonly SharedProps _share = new();
+
         private string _rootView = "Views/App.cshtml";
+
         private object? _version;
+
+        public void Share(string key, object obj) => _share.AddOrUpdate(key, obj);
+
+        public void Share(string key, Func<object> func) => _share.AddOrUpdate(key, func);
+
+        public Dictionary<string, object> GetShared() => _share.Value;
+
+        public object GetSharedByKey(string key) => _share.GetValue(key);
 
         public void SetRootView(string s) => _rootView = s;
 
@@ -38,7 +50,8 @@ namespace InertiaAdapter.Core
             return new HtmlString($"<div id=\"app\" data-page=\"{data}\"></div>");
         }
 
-        public Result Render(string component, object controller) =>
-            new Result(new Props { Controller = controller, Share = Share }, component, _rootView, GetVersion());
+        public IActionResult Render(string component, object controller) =>
+            new Result(new Props { Controller = controller, SharedProps = _share.Value }, component, _rootView,
+                GetVersion());
     }
 }

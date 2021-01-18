@@ -1,12 +1,19 @@
-﻿using InertiaAdapter.Core;
-using Microsoft.AspNetCore.Html;
 using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InertiaAdapter.Interfaces
 {
     public interface IResultFactory
     {
-        object? Share { get; set; }
+        void Share(string key, object obj);
+
+        void Share(string key, Func<object> func);
+
+        Dictionary<string, object> GetShared();
+
+        object GetSharedByKey(string key);
 
         void SetRootView(string s);
 
@@ -18,6 +25,6 @@ namespace InertiaAdapter.Interfaces
 
         IHtmlContent Html(dynamic model);
 
-        Result Render(string component, object controller);
+        IActionResult Render(string component, object controller);
     }
 }

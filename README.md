@@ -1,10 +1,12 @@
+# I am back!!! I will update this repo very soon!!!
+
 # Inertia.js ASP.NET Core Adapter
 
 Visit [inertiajs.com](https://inertiajs.com/) to learn more.
 
 # Prerequisite
 
-1. Latest SDK [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1).
+1. Latest SDK [.NET Core v5.0.2](https://dotnet.microsoft.com/download/dotnet/5.0).
 2. Create `ASP.NET Core Web App (Model-View-Controller) mvc` project.
 
 # Install

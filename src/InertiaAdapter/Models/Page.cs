@@ -1,6 +1,6 @@
-﻿namespace InertiaAdapter.Models
+namespace InertiaAdapter.Models
 {
-    public class Page
+    internal class Page
     {
         public string? Component { get; set; }
         public string? Version { get; set; }

@@ -1,9 +1,11 @@
-﻿namespace InertiaAdapter.Models
+using System.Collections.Generic;
+
+namespace InertiaAdapter.Models
 {
-    public class Props
+    internal class Props
     {
         public object? Controller { get; set; }
-        public object? Share { get; set; }
+        public Dictionary<string, object>? SharedProps { get; set; }
         public object? With { get; set; }
     }
 }
