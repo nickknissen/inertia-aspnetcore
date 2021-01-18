@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using InertiaAdapter.Core;
 using InertiaAdapter.Interfaces;
 using Microsoft.AspNetCore.Html;
@@ -20,14 +21,16 @@ namespace InertiaAdapter
 
         public static void Version(string s) => _factory.Version(s);
 
-        public static IHtmlContent Html(dynamic m) => _factory.Html(m);
-
         public static void Version(Func<string> s) => _factory.Version(s);
 
-        public static object? Share
-        {
-            get => _factory.Share;
-            set => _factory.Share = value;
-        }
+        public static IHtmlContent Html(dynamic m) => _factory.Html(m);
+
+        public static void Share(string key, object obj) => _factory.Share(key, obj);
+
+        public static void Share(string key, Func<object> func) => _factory.Share(key, func);
+
+        public static Dictionary<string, object> GetShared() => _factory.GetShared();
+
+        public static object GetSharedByKey(string key) => _factory.GetSharedByKey(key);
     }
 }

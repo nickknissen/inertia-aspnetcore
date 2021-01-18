@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using InertiaAdapter.Core;
 using Microsoft.AspNetCore.Html;
 
@@ -6,7 +7,13 @@ namespace InertiaAdapter.Interfaces
 {
     public interface IResultFactory
     {
-        object? Share { get; set; }
+        void Share(string key, object obj);
+
+        void Share(string key, Func<object> func);
+
+        Dictionary<string, object> GetShared();
+
+        object GetSharedByKey(string key);
 
         void SetRootView(string s);
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using InertiaAdapter.Interfaces;
 using InertiaAdapter.Models;
@@ -8,11 +9,19 @@ namespace InertiaAdapter.Core
 {
     internal class ResultFactory : IResultFactory
     {
-        public object? Share { get; set; }
+        private readonly SharedProps _share = new();
 
         private string _rootView = "Views/App.cshtml";
 
         private object? _version;
+
+        public void Share(string key, object obj) => _share.Add(key, obj);
+
+        public void Share(string key, Func<object> func) => _share.Add(key, func);
+
+        public Dictionary<string, object> GetShared() => _share.Value;
+
+        public object GetSharedByKey(string key) => _share.GetValue(key);
 
         public void SetRootView(string s) => _rootView = s;
 
@@ -37,6 +46,6 @@ namespace InertiaAdapter.Core
         }
 
         public Result Render(string component, object controller) =>
-            new(new Props { Controller = controller, Share = Share }, component, _rootView, GetVersion());
+            new(new Props { Controller = controller, SharedProps = _share.Value }, component, _rootView, GetVersion());
     }
 }
