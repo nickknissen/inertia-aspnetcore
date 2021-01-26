@@ -30,6 +30,11 @@ namespace InertiaAdapter.Extensions
             return obj != null && obj.GetType().IsGenericType && obj.GetType().GetGenericTypeDefinition() == typeof(Lazy<>);
         }
 
+        internal static bool IsFunc(this object obj)
+        {
+            return obj != null && obj.GetType().IsGenericType && obj.GetType().GetGenericTypeDefinition() == typeof(Func<>);
+        }
+
         internal static void ConfigureResponse(this ActionContext? ac)
         {
             ac.NotNull().HttpContext.Response.Headers.Add("Vary", "Accept");

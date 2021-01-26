@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace InertiaAdapter.Core
@@ -54,9 +55,21 @@ namespace InertiaAdapter.Core
             if (isPartial) {
                 _props.Controller = InvokeIfLazy(only);
             } else {
-		        // Remove lazy objects
-                _props.Controller = _props.Controller.Where(kvp => !kvp.Value.IsLazy()).ToDictionary(i => i.Key, i => i.Value);
+                // Remove lazy objects
+                _props.Controller = _props.Controller
+                    .Where(kvp => !kvp.Value.IsLazy())
+                    .ToDictionary(i => i.Key, i =>
+                    {
+                        if (i.Value.IsFunc())
+                        {
+                            dynamic func = (dynamic) i.Value;
+                            return func.Invoke();
+                        }
+
+                        return i.Value;
+                    });
             }
+
 
             foreach(var resolver in _sharedDataResolvers)
             {
@@ -88,7 +101,13 @@ namespace InertiaAdapter.Core
                 if (obj.IsLazy())
                 {
                     return ((dynamic) obj).Value;
-                } else {
+                } 
+                else if (obj.IsFunc())
+                {
+                    dynamic func = (dynamic) obj;
+                    return func.Invoke();
+                } 
+                else {
                     return obj;
                 }
             });
