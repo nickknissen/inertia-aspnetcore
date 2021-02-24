@@ -2,6 +2,7 @@
 using InertiaAdapter.Interfaces;
 using InertiaAdapter.Models;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,8 @@ namespace InertiaAdapter.Core
 
             return new HtmlString($"<div id=\"app\" data-page=\"{data}\"></div>");
         }
+
+        public IActionResult Location(string url) => new LocationResult(url);
 
         public Result Render(string component, object controllerProps)
         {

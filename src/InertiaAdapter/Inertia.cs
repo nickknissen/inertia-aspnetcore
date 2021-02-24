@@ -2,6 +2,7 @@
 using InertiaAdapter.Extensions;
 using InertiaAdapter.Interfaces;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ namespace InertiaAdapter
 
             return result;
         }
+
+	    public static IActionResult Location(string url) => _factory.Location(url);
 
         public static string? GetVersion() => _factory.GetVersion();
 

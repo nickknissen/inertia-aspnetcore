@@ -1,6 +1,7 @@
 ﻿using InertiaAdapter.Core;
 using InertiaAdapter.Extensions;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
@@ -21,7 +22,11 @@ namespace InertiaAdapter.Interfaces
         IHtmlContent Html(dynamic model);
 
         Result Render(string component, object controller);
+
         void AddSharedDataResolver(ISharedDataResolver dataResolvers);
+
         List<ISharedDataResolver> SharedDataResolvers { get; set; }
+
+        IActionResult Location(string url);
     }
 }

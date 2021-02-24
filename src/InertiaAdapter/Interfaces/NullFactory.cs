@@ -1,6 +1,7 @@
 ﻿using InertiaAdapter.Core;
 using InertiaAdapter.Extensions;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
@@ -26,5 +27,7 @@ namespace InertiaAdapter.Interfaces
         public void ShareData(string key, object value) => throw new NotImplementedException();
 
         public void AddSharedDataResolver(ISharedDataResolver dataResolvers) => throw new NotImplementedException();
+
+        public IActionResult Location(string url) => throw new NotImplementedException();
     }
 }
