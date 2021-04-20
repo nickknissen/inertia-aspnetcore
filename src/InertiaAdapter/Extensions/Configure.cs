@@ -67,5 +67,11 @@ namespace InertiaAdapter.Extensions
 
             return app;
         }
+
+        public static IApplicationBuilder UseInertia(this IApplicationBuilder app)
+        {
+            _ = new InertiaBuilder(app);
+            return app;
+        }
     }
 }
